@@ -13,7 +13,9 @@
   "author": "Kavish",
   "license": "ISC",
   "dependencies": {
-    "babel-preset-react": "^6.24.1"
+    "babel-preset-react": "^6.24.1",
+    "events": "^1.1.1",
+    "flux": "^3.1.2"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

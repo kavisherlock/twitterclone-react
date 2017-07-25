@@ -1,5 +1,13 @@
 import TweetBox from './components/TweetBox';
 import TweetList from './components/TweetList';
+import TweetStore from './stores/TweetStore';
+
+import TweetActions from "./actions/TweetActions";
+TweetActions.getAllTweets();
+
+let getAppState = () => {
+  return { tweetList: TweetStore.getAll() };
+}
 
 let mockTweets = [
   {id:1, name: 'Kavish Munjal', body: "I love Claire!"},
@@ -10,33 +18,20 @@ let mockTweets = [
 class Main extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tweetList: mockTweets };
+    this.state = getAppState();
+    this._onChange = this._onChange.bind(this);
   }
 
-  formattedTweets(tweetList) {
-    let formatedList = tweetList.map(tweet => {
-      tweet.formattedDate = moment(tweet.created_at).fromNow();
-      return tweet;
-    });
-    return {
-      tweetList: tweetList
-    };
-  }
-
-  addTweet(tweetToAdd) {
-    $.post("/tweets", { body: tweetToAdd})
-    .success( savedTweet => {
-      let newTweetList = this.state.tweetList;
-      newTweetList.unshift(savedTweet);
-      this.setState(this.formattedTweets(newTweetList))
-    })
-    .error(error => console.log("ERROR!"));
-  }
-//{id:Date.now(), name: "Kavish Munjal", body: tweetToAdd}
   componentDidMount() {
-    $.ajax("/tweets")
-    .success(data => this.setState(this.formattedTweets(data)))
-    .error(error => console.log("ERROR!"));
+    TweetStore.addChangeListener(this._onChange);
+  }
+
+  componentWillUnmount() {
+    TweetStore.removeChangeListener(this._onChange);
+  }
+
+  _onChange() {
+    this.setState(getAppState());
   }
 
   render() {
@@ -45,7 +40,7 @@ class Main extends React.Component {
         <div className="col s10 offset-s1">
           <h3>Welcome to TwitterClone!</h3>
         </div>
-        <TweetBox sendTweet={this.addTweet.bind(this)}/>
+        <TweetBox />
         <TweetList tweets={this.state.tweetList}/>
       </div>
     );

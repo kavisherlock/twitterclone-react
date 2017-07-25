@@ -9,7 +9,7 @@ class Tweet < ApplicationRecord
     user.display_name
   end
 
-  def gravaltar
+  def gravatar
     # create the md5 hash
     hash = Digest::MD5.hexdigest(user.email)
     "https://www.gravatar.com/avatar/#{hash}"
