@@ -1,6 +1,6 @@
 class TweetsController < ApplicationController
   def index
-    render json: Tweet.includes(:user).order('created_at DESC').all
+    render json: Tweet.stream_for(current_user.id)
   end
 
   def create

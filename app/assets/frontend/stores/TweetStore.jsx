@@ -1,29 +1,15 @@
 import AppDispatcher from "../dispatcher"
 import ActionTypes from "../constants"
-import { EventEmitter } from "events";
+import AppEventEmitter from "./AppEventEmitter";
 
 let _tweets = [];
-const CHANGE_EVENT = "CHANGE";
 
-class TweetEventEmitter extends EventEmitter {
-
+class TweetEventEmitter extends AppEventEmitter {
     getAll() {
       return _tweets.map(tweet => {
         tweet.formattedDate = moment(tweet.created_at).fromNow();
         return tweet;
       });
-    }
-
-    emitChange() {
-      this.emit(CHANGE_EVENT);
-    }
-
-    addChangeListener(callback) {
-      this.on(CHANGE_EVENT, callback);
-    }
-
-    removeChangeListener(callback) {
-      this.removeListener(CHANGE_EVENT, callback);
     }
 }
 
@@ -38,6 +24,7 @@ AppDispatcher.register( action => {
     case ActionTypes.RECEIVED_ONE_TWEET:
       _tweets.unshift(action.rawTweet);
       TweetStore.emitChange()
+      break;
     default:
       //no op
   }

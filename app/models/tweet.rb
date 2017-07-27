@@ -2,7 +2,7 @@ class Tweet < ApplicationRecord
   belongs_to :user
 
   def as_json(options={})
-    super(methods: [:name])
+    super(methods: [:name, :gravatar])
   end
 
   def name
@@ -10,8 +10,16 @@ class Tweet < ApplicationRecord
   end
 
   def gravatar
-    # create the md5 hash
-    hash = Digest::MD5.hexdigest(user.email)
-    "https://www.gravatar.com/avatar/#{hash}"
+    user.gravatar
+  end
+
+  def self.stream_for(current_user_id)
+    joins(:user)
+    .where(["users.id = :current_user_id or users.id in (
+      select user_id from followers
+      where followed_by = :current_user_id
+      )", { current_user_id: current_user_id }])
+    .order('created_at DESC')
+    .all
   end
 end
