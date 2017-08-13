@@ -5,7 +5,7 @@ module.exports = {
         filename: "bundle.js"
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: ["", ".js", ".jsx"]
     },
     module: {
         loaders: [
@@ -13,6 +13,9 @@ module.exports = {
               test: /\.jsx$/,
               exclude: /node_modules/,
               loader: "babel-loader",
+              options: {
+                "presets": [["es2015", {"modules": false}], "react"]
+              },
               query:
               {
                 presets:['react']
